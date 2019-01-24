@@ -1,0 +1,66 @@
+@import "./../../../css/variables.scss";
+
+$menu-color: $yellow;
+
+.menu {
+  position: relative;
+  background-color: $menu-color;
+
+  &:before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 5px;
+    background: black;
+  }
+
+  &__header {
+    width: 100%;
+    height: 100px;
+  }
+
+  &__hr {
+    height: 1px;
+    width: 100%;
+    background-color: black;
+    padding: 0;
+    margin: 0;
+    border: none;
+  }
+
+  &__section {
+    background-color: $menu-color;
+    margin: 0;
+    padding: 20px 10%;
+    font-size: 20px;
+    font-weight: 300;
+    text-align: left;
+    color: black;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 300ms ease-in-out;
+
+    &:hover {
+      transform: translateX(5px);
+    }
+
+    &_active {
+      background-color: black;
+      color: white;
+      cursor: auto;
+      pointer-events: none;
+
+      &:hover {
+        transform: none;
+      }
+    }
+
+    &-container {
+      width: 100%;
+      overflow-y: scroll;
+      height: calc(100vh - 100px);
+    }
+  }
+}
