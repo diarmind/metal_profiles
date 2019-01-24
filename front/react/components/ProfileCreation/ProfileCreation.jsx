@@ -21,7 +21,11 @@ export default class ProfileCreation extends React.Component {
         const {dataIn} = this.props;
 
         return(
-            <div className="text">
+            <div style={{
+                fontSize: 40 + 'px',
+                textAlign: 'center',
+                lineHeight: 100 + 'vh',
+            }}>
                 Profile creation! Incremented one is: {dataIn}!
             </div>
         )

@@ -31,9 +31,13 @@ export default class Index extends React.Component {
         const {counter} = this.state;
 
         return(
-            <div className="text">
+            <div style={{
+                fontSize: 40 + 'px',
+                textAlign: 'center',
+                lineHeight: 100 + 'vh',
+            }}>
                 Index! Next value is:
-                <input type="number" value={counter} onChange={this.changeCounter}/>
+                <input type="number" style={{fontSize: 40 + 'px'}} value={counter} onChange={this.changeCounter}/>
             </div>
         )
     }
