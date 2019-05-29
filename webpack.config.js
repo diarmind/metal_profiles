@@ -2,6 +2,7 @@ const webpack = require("webpack");
 const path = require("path");
 const BundleTracker = require('webpack-bundle-tracker');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const publicPath = '/dist/build/';
 
@@ -18,15 +19,14 @@ module.exports = {
         historyApiFallback: true,
         noInfo: false,
         stats: 'minimal',
-        publicPath: publicPath,
+        publicPath: '/',
         contentBase: path.join(__dirname, publicPath),
     },
 
     output: {
-        path: path.join(__dirname, publicPath),
-        filename: '[name].bundle.js',
-        publicPath: 'http://localhost:3000' + publicPath,
-        sourceMapFilename: '[name].map',
+        path: path.join(__dirname, "/dist"),
+        filename: "bundle.js",
+        publicPath: "/",
     },
 
     module: {
@@ -49,9 +49,14 @@ module.exports = {
 
     plugins: [
         new MiniCssExtractPlugin({
-            filename: "[name].bundle.css",
-            allChunks: true
+          filename: "[name].css",
+          chunkFilename: "[id].css"
         }),
-        new BundleTracker({filename: './webpack-stats.json'})
+        new BundleTracker({filename: './webpack-stats.json'}),
+        new HtmlWebpackPlugin({
+          template: "./src/index.html",
+          minify: false,
+          baseUrl: '/',
+        })
     ]
 };
