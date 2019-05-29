@@ -2,6 +2,7 @@ import React from 'react';
 import Menu from './components/Menu/Menu.jsx';
 import Index from './components/Index/Index.jsx';
 import ProfileCreation from './components/ProfileCreation/ProfileCreation.jsx'
+import Roller from './components/Roller/Roller.jsx';
 
 import './App.scss';
 
@@ -49,6 +50,7 @@ export default class App extends React.Component {
                     title: 'Редактор профилей валков',
                     path: '',
                     name: 'shaft_profile_editor',
+                    component: Roller,
                     dataOut: null,
                 },
                 {
@@ -114,8 +116,12 @@ export default class App extends React.Component {
                 <Menu menuSections={menuSections} active={active} changeSection={this.changeSection} />
                 <div className="action-screen">
                     {active && Stage && (
-                        <Stage savedOut={section.dataOut} dataIn={this.getInitialParams(section.name)} setOut={this.setOutFabric(section.name)} />
-                    ) }
+                        <Stage
+                            savedOut={section.dataOut}
+                            dataIn={this.getInitialParams(section.name)}
+                            setOut={this.setOutFabric(section.name)}
+                        />
+                    )}
                 </div>
             </div>
         )

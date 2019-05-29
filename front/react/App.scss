@@ -2,3 +2,7 @@
   display: grid;
   grid-template-columns: 300px 1fr;
 }
+
+.action-screen {
+  overflow: auto;
+}

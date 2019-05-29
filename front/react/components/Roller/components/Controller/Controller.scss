@@ -1,0 +1,30 @@
+.roller-controls {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  padding: 5px;
+  background-color: white;
+  width: 300px;
+  border: 1px solid black;
+  border-radius: 3px;
+  box-sizing: border-box;
+
+  &__input-line {
+    margin-bottom: 10px;
+  }
+
+  &__input {
+    font-size: 14px;
+    border-radius: 3px;
+    border: 1px solid black;
+    width: 100%;
+    color: black;
+    box-sizing: border-box;
+  }
+
+  &__label {
+    font-size: 14px;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+}
