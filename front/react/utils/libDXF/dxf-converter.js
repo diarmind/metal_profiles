@@ -2,7 +2,7 @@ import Primitive from './primitive';
 import Dxf from './dxf';
 
 /**
- * DxfCoverter class
+ * DxfConverter class
  */
 export default class DxfConverter {
     /**
@@ -36,12 +36,12 @@ export default class DxfConverter {
         } catch (err) {
             throw err;
         }
-        this.writePrimitivesToDxf(primitives, dxfFile, curve.layerName);
+        DxfConverter.writePrimitivesToDxf(primitives, dxfFile, curve.layerName);
     }
 
     /**
      * Write sections to dxfFile
-     * @param {Array} sections array of sections
+     * @param {Object} sectionsData object with array of sections and additional data
      * @param {Dxf} dxfFile dxfFile to save
      */
     writeSectionsToDxf(sectionsData, dxfFile) {
@@ -58,8 +58,11 @@ export default class DxfConverter {
     /**
      * Write section to dxfFile
      * @param {Object} section section with neutralLine, profile and rollers
-     * @param {Dxf} dxfFile dxfFile to save 
-     * @param {String} layerName name of layer where section will be placed
+     * @param {Dxf} dxfFile dxfFile to save
+     * @param {Number} sectionNumber number of section (order)
+     * @param {Object | null} colors object with colors from front
+     * @param {Object | null} lineTypes object with line types from front
+     * @param {Object | null} layerNames object with names for layer from front
      */
     writeSectionToDxf(section, dxfFile, sectionNumber, colors, lineTypes, layerNames) {
         if (section.neutralPolyline && Array.isArray(section.neutralPolyline.primitives)) {
@@ -191,6 +194,13 @@ export default class DxfConverter {
 
     }
 
+    /**
+     * Convert colors from front to Dxf.colors
+     *
+     * @param color color from front
+     * @returns {number} color from Dxf.colors
+     * @private
+     */
     _getDxfColor(color) {
         switch (color) {
             case 1:
@@ -217,6 +227,13 @@ export default class DxfConverter {
         }
     }
 
+    /**
+     * Convert line types from front to Dxf.lineTypes
+     *
+     * @param type line type from front
+     * @returns {string} line type from Dxf.lineTypes
+     * @private
+     */
     _getDxfLineTypes(type) {
         switch (type) {
             case 1:
@@ -233,12 +250,13 @@ export default class DxfConverter {
         } catch (err) {
             throw err;
         }
-        this.writePrimitivesToDxf(primitivesLocal, dxfFile, layerName);
+        DxfConverter.writePrimitivesToDxf(primitivesLocal, dxfFile, layerName);
     }
 
     /**
      * Convert section.primitives to array of `Primitives`
-     * @param {*} section 
+     *
+     * @param {*} primitivesCommon primitives from front
      * @returns {Array<Primitive>} primitives array
      */
     convertCommonPrimitivesToPrimitives(primitivesCommon) {
@@ -584,7 +602,7 @@ export default class DxfConverter {
      * @param {Dxf} dxfFile dxf file object to write
      * @param {String} layerName
      */
-    writePrimitivesToDxf(primitives, dxfFile, layerName) {
+    static writePrimitivesToDxf(primitives, dxfFile, layerName) {
         for (const primitive of primitives) {
             if (primitive) {
                 switch (primitive.type.toUpperCase()) {
