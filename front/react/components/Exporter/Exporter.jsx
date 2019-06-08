@@ -13,6 +13,7 @@ export default class Exporter extends React.Component {
 
         this.state = {
             fileName: 'file',
+            saved: false,
 
             neutralLayerName: 'neutral',
             neutralColor: 2,
@@ -49,6 +50,20 @@ export default class Exporter extends React.Component {
         this.changeRollerAxisColor = this.changeRollerAxisColor.bind(this);
         this.changeRollerAxisLine = this.changeRollerAxisLine.bind(this);
         this.changeRollerAxisLayerName = this.changeRollerAxisLayerName.bind(this);
+
+        this.getNewFileName = this.getNewFileName.bind(this);
+    }
+
+    getNewFileName() {
+        const nowDate = new Date();
+        let newName = 'export_' + nowDate.getFullYear() + (nowDate.getMonth() + 1) + nowDate.getDate() 
+            + '-' + nowDate.getHours() + nowDate.getMinutes() + nowDate.getSeconds();
+        return newName;
+    }
+
+    componentDidMount() {
+        const nowDate = new Date();
+        this.setState({fileName: this.getNewFileName()})
     }
 
     saveToDxf() {
@@ -79,6 +94,8 @@ export default class Exporter extends React.Component {
         const dxfFile = new Dxf();
         converter.writeSectionsToDxf(exchangeData, dxfFile);
         FileSaver.saveTextToFile(dxfFile.body, fullFileName);
+
+        this.setState({saved: true});
     }
 
     changeFileName(e) {
@@ -157,144 +174,193 @@ export default class Exporter extends React.Component {
         let data = this.getSections();
 
         const colors = [
-            {value: 7, name: 'Черный / белый'},
-            {value: 1, name: 'Красный'},
-            {value: 2, name: 'Желтый'},
-            {value: 3, name: 'Зеленый'},
-            {value: 4, name: 'Голубой'},
-            {value: 5, name: 'Синий'},
-            {value: 6, name: 'Фиолетовый'},
-            {value: 8, name: 'Серый (темный)'},
-            {value: 9, name: 'Серый (светлый)'},
+            {value: 7, name: 'Черный / белый', rgb: '#fff'},
+            {value: 1, name: 'Красный', rgb: '#f00'},
+            {value: 2, name: 'Желтый', rgb: '#ff0'},
+            {value: 3, name: 'Зеленый', rgb: '#0f0'},
+            {value: 4, name: 'Голубой', rgb: '#0ff'},
+            {value: 5, name: 'Синий', rgb: '#00f'},
+            {value: 6, name: 'Фиолетовый', rgb: '#f0f'},
+            {value: 8, name: 'Серый (темный)', rgb: '#808080'},
+            {value: 9, name: 'Серый (светлый)', rgb: '#c0c0c0'},
         ];
 
         const lineTypes = [
-            {value: 1, type: 'сплошная (______)'},
-            {value: 2, type: 'штрихпунктирная (___ - ___- ___)'}
+            {value: 1, type: 'Сплошная ( ⸺⸺⸺ )'},
+            {value: 2, type: 'Штрихпунктирная ( ⸺ - ⸺ - ⸺ )'}
         ]
 
         return(
             <div className='exporter'>
-                <h2>
-                    Экспорт
-                </h2>
+                <div className='exporter__header'>
+                    <h2>
+                        Экспорт геометрии
+                    </h2>
+                </div>
+
+                <hr/>
+                <div className='exporter__layers-style'>
+                    <h3>
+                        Стилизация слоев:
+                    </h3>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td>Название слоя</td>
+                                <td>Цвет линий</td>
+                                <td>Тип линий</td>
+                            </tr>
+
+                            <tr>
+                                <td>Нейтраль</td>
+                                <td>
+                                    <input
+                                        onChange={this.changeNeutralLayerName}
+                                        value={this.state.neutralLayerName}
+                                    />
+                                </td>
+                                <td>
+                                    <select value={this.state.neutralColor} onChange={this.changeNeutralColor}>
+                                        <option disabled>Выберите цвет:</option>
+                                        {colors.map((color) => (
+                                            <option 
+                                                value={color.value}
+                                                key={`color-${color.value}`}
+                                                style={{background: color.rgb}}
+                                            >
+                                                {color.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select value={this.state.neutralLineType} onChange={this.changeNeutralLine}>
+                                        <option disabled>Выберите тип линии:</option>
+                                        {lineTypes.map((lineType) => (
+                                            <option value={lineType.value} key={`lineType-${lineType.value}`}>{lineType.type}</option>
+                                        ))}
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Профиль (эквидистанты)</td>
+                                <td>
+                                    <input
+                                        onChange={this.changeProfileLayerName}
+                                        value={this.state.profileLayerName}
+                                    />
+                                </td>
+                                <td>
+                                    <select value={this.state.profileColor} onChange={this.changeProfileColor}>
+                                    <option disabled>Выберите цвет:</option>
+                                        {colors.map((color) => (
+                                            <option 
+                                                value={color.value}
+                                                key={`color-${color.value}`}
+                                                style={{background: color.rgb}}
+                                            >
+                                                {color.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select value={this.state.profileLineType} onChange={this.changeProfileLine}>
+                                        <option disabled>Выберите тип линии:</option>
+                                        {lineTypes.map((lineType) => (
+                                            <option value={lineType.value} key={`lineType-${lineType.value}`}>{lineType.type}</option>
+                                        ))}
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Валки</td>
+                                <td>
+                                    <input
+                                        onChange={this.changeRollerLayerName}
+                                        value={this.state.rollerLayerName}
+                                    />
+                                </td>
+                                <td>
+                                    <select value={this.state.rollerColor} onChange={this.changeRollerColor}>
+                                    <option disabled>Выберите цвет:</option>
+                                        {colors.map((color) => (
+                                            <option 
+                                                value={color.value}
+                                                key={`color-${color.value}`}
+                                                style={{background: color.rgb}}
+                                            >
+                                                {color.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select value={this.state.rollerLineType} onChange={this.changeRollerLine}>
+                                        <option disabled>Выберите тип линии:</option>
+                                        {lineTypes.map((lineType) => (
+                                            <option value={lineType.value} key={`lineType-${lineType.value}`}>{lineType.type}</option>
+                                        ))}
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Оси валков</td>
+                                <td>
+                                    <input
+                                        onChange={this.changeRollerAxisLayerName}
+                                        value={this.state.rollerAxisLayerName}
+                                    />
+                                </td>
+                                <td>
+                                    <select value={this.state.rollerAxisColor} onChange={this.changeRollerAxisColor}>
+                                        <option disabled>Выберите цвет:</option>
+                                        {colors.map((color) => (
+                                            <option 
+                                                value={color.value}
+                                                key={`color-${color.value}`}
+                                                style={{background: color.rgb}}
+                                            >
+                                                {color.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select value={this.state.rollerAxisLineType} onChange={this.changeRollerAxisLine}>
+                                    <option disabled>Выберите тип линии:</option>
+                                        {lineTypes.map((lineType) => (
+                                            <option value={lineType.value} key={`lineType-${lineType.value}`}>{lineType.type}</option>
+                                        ))}
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr/>
                 <div className='exporter__input-name'>
-                    Название файла:&nbsp;
+                    <h3>
+                        Название файла:
+                    </h3>
                     <input
                         onChange={this.changeFileName}
                         placeholder={fileName}
+                        size='30'
                     />
                 </div>
-                <h3>
-                    Стилизация слоев
-                </h3>
-                <table>
-                    <tr>
-                        <td></td>
-                        <td>Название слоя</td>
-                        <td>Цвет линий</td>
-                        <td>Тип линий</td>
-                    </tr>
 
-                    <tr>
-                        <td>Нейтраль</td>
-                        <td>
-                            <input
-                                onChange={this.changeNeutralLayerName}
-                                value={this.state.neutralLayerName}
-                            />
-                        </td>
-                        <td>
-                            <select value={this.state.neutralColor} onChange={this.changeNeutralColor}>
-                                {colors.map((color) => (
-                                    <option value={color.value} key={`color-${color.value}`}>{color.name}</option>
-                                ))}
-                            </select>
-                        </td>
-                        <td>
-                            <select value={this.state.neutralLineType} onChange={this.changeNeutralLine}>
-                                {lineTypes.map((lineType) => (
-                                    <option value={lineType.value} key={`lineType-${lineType.value}`}>{lineType.type}</option>
-                                ))}
-                            </select>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Профиль (эквидистанты)</td>
-                        <td>
-                            <input
-                                onChange={this.changeProfileLayerName}
-                                value={this.state.profileLayerName}
-                            />
-                        </td>
-                        <td>
-                            <select value={this.state.profileColor} onChange={this.changeProfileColor}>
-                                {colors.map((color) => (
-                                    <option value={color.value} key={`color-${color.value}`}>{color.name}</option>
-                                ))}
-                            </select>
-                        </td>
-                        <td>
-                            <select value={this.state.profileLineType} onChange={this.changeProfileLine}>
-                                {lineTypes.map((lineType) => (
-                                    <option value={lineType.value} key={`lineType-${lineType.value}`}>{lineType.type}</option>
-                                ))}
-                            </select>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Валки</td>
-                        <td>
-                            <input
-                                onChange={this.changeRollerLayerName}
-                                value={this.state.rollerLayerName}
-                            />
-                        </td>
-                        <td>
-                            <select value={this.state.rollerColor} onChange={this.changeRollerColor}>
-                                {colors.map((color) => (
-                                    <option value={color.value} key={`color-${color.value}`}>{color.name}</option>
-                                ))}
-                            </select>
-                        </td>
-                        <td>
-                            <select value={this.state.rollerLineType} onChange={this.changeRollerLine}>
-                                {lineTypes.map((lineType) => (
-                                    <option value={lineType.value} key={`lineType-${lineType.value}`}>{lineType.type}</option>
-                                ))}
-                            </select>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Оси валков</td>
-                        <td>
-                            <input
-                                onChange={this.changeRollerAxisLayerName}
-                                value={this.state.rollerAxisLayerName}
-                            />
-                        </td>
-                        <td>
-                            <select value={this.state.rollerAxisColor} onChange={this.changeRollerAxisColor}>
-                                {colors.map((color) => (
-                                    <option value={color.value} key={`color-${color.value}`}>{color.name}</option>
-                                ))}
-                            </select>
-                        </td>
-                        <td>
-                            <select value={this.state.rollerAxisLineType} onChange={this.changeRollerAxisLine}>
-                                {lineTypes.map((lineType) => (
-                                    <option value={lineType.value} key={`lineType-${lineType.value}`}>{lineType.type}</option>
-                                ))}
-                            </select>
-                        </td>
-                    </tr>
-
-                </table>
+                <hr/>
 
                 <div className='exporter__button-save'>
+                    <h3>
+                        Сохранение:
+                    </h3>
                     <button
                         onClick={this.saveToDxf}
 
@@ -302,6 +368,11 @@ export default class Exporter extends React.Component {
                         Сохранить в DXF
                     </button>
                 </div>
+                {(this.state.saved) && (
+                    <div className='exporter__saved'>
+                        Экспорт прошел успешно. Файл сохранен на компьютере.
+                    </div>
+                )}
             </div>
         )
     }
