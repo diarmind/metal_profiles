@@ -1,4 +1,9 @@
-function buildFromLRA(element, bias) {
+import {SharedFormats, LineShared, ArcShared, Angle, CurveShared, EquidArc, Roll} from './Curve.js';
+import {TransMatrix, SumMatrix, MinusMatrix, multMatrixNumber, MultiplyMatrix, MultyplyMatrixVector, MatrixRoot, MultiplyVector, Determinant, radToDeg, degToRad} from './matrix.js';
+import * as THREE from 'three';
+import {GetEquidPoints, getEquidistantPoint, getVectorsAngle, CreateIndent, getAngleLen, getUnitVector} from './Equid.js';
+
+function buildFromLRA(element, bias, domEvents, scene) {
 	let ExternalEquidCurve = new CurveShared([]);
 	let MainCurve = new CurveShared([]);
 	let InteriorEquidCurve = new CurveShared([]);
@@ -18,10 +23,10 @@ function buildFromLRA(element, bias) {
 		p0 = MultyplyMatrixVector(position_matrix, [element.L[line_num] * (-(element.ac - Math.trunc(element.ac))), 0, 1]);
 		p1 = MultyplyMatrixVector(position_matrix, [element.L[line_num] * (Math.trunc(element.ac) + 1 - element.ac), 0, 1]);
 
-		let l = new LineShared({x1: p0[0], y1: p0[1], z1: element.az, x2: p1[0], y2: p1[1], z2: element.az});
+		let l = new LineShared({x1: p0[0], y1: p0[1], z1: element.az, x2: p1[0], y2: p1[1], z2: element.az, domEvents: domEvents, scene: scene});
 		MainCurve.push(l);
-		InteriorEquidCurve.push(l.getEquid({revert: true, equidType: SharedFormats.InteriorEquid}));
-		ExternalEquidCurve.push(l.getEquid({revert: false, equidType: SharedFormats.ExternalEquid}));
+		InteriorEquidCurve.push(l.getEquid({globalBias: bias, revert: true, equidType: SharedFormats.InteriorEquid}));
+		ExternalEquidCurve.push(l.getEquid({globalBias: bias, revert: false, equidType: SharedFormats.ExternalEquid}));
 
 		working_position_matrix = [
 			[Math.cos(degToRad(element.aa)), -Math.sin(degToRad(element.aa)), p1[0]],
@@ -47,24 +52,24 @@ function buildFromLRA(element, bias) {
 		arc = new ArcShared ({
 			x: c_new[0], y: c_new[1], z: element.az,
 			R: element.R[line_num],
-			fi_start: aStartAngle, fi_end: aEndAngle
+			fi_start: aStartAngle, fi_end: aEndAngle, domEvents: domEvents, scene: scene
 			}
 		);
 
 		MainCurve.push(arc);
 		let arc_equid_ext = new ArcShared ({
 			x: c_new[0], y: c_new[1], z: element.az,
-			R: element.A[line_num] > 0 ? element.R[line_num] + globalBias : element.R[line_num] - globalBias,
-			fi_start: aStartAngle, fi_end: aEndAngle, equidArc: true
+			R: element.A[line_num] > 0 ? element.R[line_num] + bias : element.R[line_num] - bias,
+			fi_start: aStartAngle, fi_end: aEndAngle, equidArc: true, domEvents: domEvents, scene: scene
 			}
 		);
 		let arc_equid_int = new ArcShared ({
 			x: c_new[0], y: c_new[1], z: element.az,
-			R: element.A[line_num] > 0 ? element.R[line_num] - globalBias : element.R[line_num] + globalBias,
-			fi_start: aStartAngle, fi_end: aEndAngle, equidArc: true
+			R: element.A[line_num] > 0 ? element.R[line_num] - bias : element.R[line_num] + bias,
+			fi_start: aStartAngle, fi_end: aEndAngle, equidArc: true, domEvents: domEvents, scene: scene
 			}
 		);
-		let offset = getAngleLen({theta: element.A[line_num], radius: element.R[line_num] + globalBias});
+		let offset = getAngleLen({theta: element.A[line_num], radius: element.R[line_num] + bias});
 		let arc_equid_ext_points = element.A[line_num] > 0 ? arc_equid_ext.getPoints() : arc_equid_int.getPoints();
 
 		rotation_angle += element.A[line_num] * (Math.trunc(element.ac) + 1 - element.ac);
@@ -91,6 +96,8 @@ function buildFromLRA(element, bias) {
 				z1 : element.az,
 				z2 : element.az,
 				z3 : element.az,
+				domEvents: domEvents,
+				scene: scene
 			}
 		);
 
@@ -138,24 +145,24 @@ function buildFromLRA(element, bias) {
 			arc = new ArcShared ({
 				x: c_new[0], y: c_new[1], z: element.az,
 				R: element.R[i],
-				fi_start: aStartAngle, fi_end: aEndAngle
+				fi_start: aStartAngle, fi_end: aEndAngle, scene: scene, domEvents: domEvents
 				}
 			);
 
 			MainCurve.push(arc);
 			let arc_equid_ext = new ArcShared ({
 				x: c_new[0], y: c_new[1], z: element.az,
-				R: element.A[i] > 0 ? element.R[i] + globalBias : element.R[i] - globalBias,
-				fi_start: aStartAngle, fi_end: aEndAngle, equidArc: true
+				R: element.A[i] > 0 ? element.R[i] + bias : element.R[i] - bias,
+				fi_start: aStartAngle, fi_end: aEndAngle, equidArc: true, domEvents: domEvents, scene: scene
 				}
 			);
 			let arc_equid_int = new ArcShared ({
 				x: c_new[0], y: c_new[1], z: element.az,
-				R: element.A[i] > 0 ? element.R[i] - globalBias : element.R[i] + globalBias,
-				fi_start: aStartAngle, fi_end: aEndAngle, equidArc: true
+				R: element.A[i] > 0 ? element.R[i] - bias : element.R[i] + bias,
+				fi_start: aStartAngle, fi_end: aEndAngle, equidArc: true, domEvents: domEvents, scene: scene
 				}
 			);
-			let offset = getAngleLen({theta: element.A[i], radius: element.R[i] + globalBias});
+			let offset = getAngleLen({theta: element.A[i], radius: element.R[i] + bias});
 
 			let lineForOffset = element.A[i] > 0 ? ExternalEquidCurve.objs[ExternalEquidCurve.objs.length - 1].obj : InteriorEquidCurve.objs[InteriorEquidCurve.objs.length - 1].obj;
 
@@ -181,6 +188,8 @@ function buildFromLRA(element, bias) {
 					z1 : element.az,
 					z2 : element.az,
 					z3 : element.az,
+					domEvents: domEvents,
+					scene: scene
 				}
 			);
 
@@ -203,13 +212,15 @@ function buildFromLRA(element, bias) {
 						x2: p[0], y2: p[1], z2: element.az,
 						x1: working_position_matrix[0][2],
 						y1: working_position_matrix[1][2],
-						z1: element.az
+						z1: element.az,
+						domEvents: domEvents,
+						scene: scene
 					}
 			);
 			MainCurve.push(line);
 
-			InteriorEquidCurve.push(line.getEquid({revert: true, equidType: SharedFormats.InteriorEquid}));
-			ExternalEquidCurve.push(line.getEquid({revert: false, equidType: SharedFormats.ExternalEquid}));
+			InteriorEquidCurve.push(line.getEquid({globalBias: bias, revert: true, equidType: SharedFormats.InteriorEquid}));
+			ExternalEquidCurve.push(line.getEquid({globalBias: bias, revert: false, equidType: SharedFormats.ExternalEquid}));
 			working_position_matrix = [
 				[Math.cos(degToRad(rotation_angle)), -Math.sin(degToRad(rotation_angle)), p[0]],
 				[Math.sin(degToRad(rotation_angle)), Math.cos(degToRad(rotation_angle)), p[1]],
@@ -224,8 +235,6 @@ function buildFromLRA(element, bias) {
 		[Math.sin(degToRad(startRotationAngle)), Math.cos(degToRad(startRotationAngle)), p0[1]],
 		[0,0,1],
 	];
-console.log(working_position_matrix);
-drawPoint({x: working_position_matrix[0][2], y: working_position_matrix[1][2], z:0})
 //обратный проход
 
 	for (let i = line_num - 1; i >= 0; i--) {
@@ -246,25 +255,25 @@ drawPoint({x: working_position_matrix[0][2], y: working_position_matrix[1][2], z
 			let arc = new ArcShared ({
 				x: c_new[0], y: c_new[1], z: element.az,
 				R: element.R[i],
-				fi_start: aStartAngle, fi_end: aEndAngle
+				fi_start: aStartAngle, fi_end: aEndAngle, domEvents: domEvents, scene: scene
 				}
 			);
 
 			MainCurve.unshift(arc);
 			let arc_equid_ext = new ArcShared ({
 				x: c_new[0], y: c_new[1], z: element.az,
-				R: element.A[i] > 0 ? element.R[i] + globalBias : element.R[i] - globalBias,
-				fi_start: aStartAngle, fi_end: aEndAngle, equidArc: true
+				R: element.A[i] > 0 ? element.R[i] + bias : element.R[i] - bias,
+				fi_start: aStartAngle, fi_end: aEndAngle, equidArc: true, domEvents: domEvents, scene: scene
 				}
 			);
 			let arc_equid_int = new ArcShared ({
 				x: c_new[0], y: c_new[1], z: element.az,
-				R: element.A[i] > 0 ? element.R[i] - globalBias : element.R[i] + globalBias,
-				fi_start: aStartAngle, fi_end: aEndAngle, equidArc: true
+				R: element.A[i] > 0 ? element.R[i] - bias : element.R[i] + bias,
+				fi_start: aStartAngle, fi_end: aEndAngle, equidArc: true, domEvents: domEvents, scene: scene
 				}
 			);
 
-			let offset = getAngleLen({theta: element.A[i], radius: element.R[i] + globalBias});
+			let offset = getAngleLen({theta: element.A[i], radius: element.R[i] + bias});
 			let lineForOffset = element.A[i] > 0 ? ExternalEquidCurve.objs[0].obj : InteriorEquidCurve.objs[0].obj;
 
 			let arc_equid_points = element.A[i] > 0 ? arc_equid_ext.getPoints() : arc_equid_int.getPoints();
@@ -288,6 +297,8 @@ drawPoint({x: working_position_matrix[0][2], y: working_position_matrix[1][2], z
 					z1 : element.az,
 					z2 : element.az,
 					z3 : element.az,
+					domEvents: domEvents,
+					scene: scene
 				}
 			);
 
@@ -311,13 +322,15 @@ drawPoint({x: working_position_matrix[0][2], y: working_position_matrix[1][2], z
 						x2: p[0], y2: p[1], z2: element.az,
 						x1: working_position_matrix[0][2],
 						y1: working_position_matrix[1][2],
-						z1: element.az
+						z1: element.az,
+						domEvents: domEvents,
+						scene: scene
 					}
 			);
 			MainCurve.unshift(line);
 
-			InteriorEquidCurve.unshift(line.getEquid({revert: false, equidType: SharedFormats.InteriorEquid}));
-			ExternalEquidCurve.unshift(line.getEquid({revert: true, equidType: SharedFormats.ExternalEquid}));
+			InteriorEquidCurve.unshift(line.getEquid({globalBias: bias, revert: false, equidType: SharedFormats.InteriorEquid}));
+			ExternalEquidCurve.unshift(line.getEquid({globalBias: bias, revert: true, equidType: SharedFormats.ExternalEquid}));
 			working_position_matrix = [
 				[Math.cos(degToRad(rotation_angle)), -Math.sin(degToRad(rotation_angle)), p[0]],
 				[Math.sin(degToRad(rotation_angle)), Math.cos(degToRad(rotation_angle)), p[1]],

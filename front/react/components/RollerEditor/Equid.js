@@ -2,6 +2,8 @@
 
 let shaftShift = 3;		//коэф для свдига центра вала
 let indent = 10;
+import {TransMatrix, SumMatrix, MinusMatrix, multMatrixNumber, MultiplyMatrix, MultyplyMatrixVector, MatrixRoot, MultiplyVector, Determinant, radToDeg, degToRad} from './matrix.js';
+import * as THREE from 'three';
 
 function GetEquidPoints(element, line, bias) {
 	let points_equid = [];		//массив точек на выход функции

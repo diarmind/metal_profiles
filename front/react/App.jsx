@@ -3,6 +3,7 @@ import Menu from './components/Menu/Menu.jsx';
 import Index from './components/Index/Index.jsx';
 import ProfileCreation from './components/ProfileCreation/ProfileCreation.jsx'
 import Roller from './components/Roller/Roller.jsx';
+import RollerEditor from './components/RollerEditor/RollerEditor.jsx';
 
 import './App.scss';
 
@@ -39,6 +40,7 @@ export default class App extends React.Component {
                     path: '',
                     name: 'intermediate_mech_profile_editor',
                     dataOut: null,
+                    component: RollerEditor,
                 },
                 {
                     title: 'Построение геометрий сечений листа',

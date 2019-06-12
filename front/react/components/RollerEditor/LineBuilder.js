@@ -1,4 +1,7 @@
-function drawLine(points) {
+import * as THREE from 'three';
+const defaultColor = 0x000000;
+
+function drawLine(points, scene) {
 	let g_line = new THREE.Geometry();
 
 	g_line.vertices.push(new THREE.Vector3(points[0].x, points[0].y, points[0].z));
@@ -19,7 +22,7 @@ function drawPoint(point) {
 	let starsGeometry = new THREE.Geometry();
 	starsGeometry.vertices.push(new THREE.Vector3(point.x, point.y, point.z));
 	let starField = new THREE.Points( starsGeometry, starsMaterial );
-	scene.add(starField);
+	// scene.add(starField);
 }
 
 export {drawLine, drawPoint};

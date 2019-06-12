@@ -1,3 +1,9 @@
+import * as FIGURES from '../../shared/figures.js';
+import {drawLine, drawPoint} from './LineBuilder.js';
+import * as THREE from 'three';
+import {GetEquidPoints, getEquidistantPoint, getVectorsAngle, CreateIndent, getAngleLen, getUnitVector} from './Equid.js';
+const defaultColor = 0x000000;
+
 const SharedFormats = {
     VECTOR: 'vector',
     LINE: 'line',
@@ -17,8 +23,9 @@ class VectorShared {
 	}
 }
 
-class LineShared {
-	constructor({x1,y1,z1,x2,y2,z2, equidLine, equidType}){//, InteriorEquid, ExternalEquid}) {
+class LineShared extends FIGURES.LineFigure {
+	constructor({x1,y1,z1,x2,y2,z2, equidLine, equidType, domEvents, scene}){//, InteriorEquid, ExternalEquid}) {
+		super({x1,y1,z1,x2,y2,z2});
 		this.x1 = x1;
 		this.x2 = x2;
 		this.y1 = y1;
@@ -28,24 +35,26 @@ class LineShared {
 		this.type = SharedFormats.LINE;
 		this.equidLine = equidLine;
 		this.shear = 0;
+		this.scene = scene;
 		this.line = drawLine([
 				{x: this.x1, y: this.y1, z: this.z1},
 				{x: this.x2, y: this.y2, z: this.z2}
-			]
+			], this.scene
 		);
 		this.color = 0x000000;
 		this.line.material = new THREE.LineBasicMaterial({color:this.color, linewidth: 1})
 		this.useInRoll = true;
 		this.id = uuidv4();
+		this.domEvents = domEvents;
 			if (this.equidLine) {
-			domEvents.addEventListener(this.line, 'mouseover', event => {
+			this.domEvents.addEventListener(this.line, 'mouseover', event => {
 				this.line.material = new THREE.LineBasicMaterial({color:0x008800});
 			});
-			domEvents.addEventListener(this.line, 'mouseout', event => {
+			this.domEvents.addEventListener(this.line, 'mouseout', event => {
 					this.line.material = new THREE.LineBasicMaterial({color: this.color});
 			});
 			this.equidType = equidType;
-			domEvents.addEventListener(this.line, 'click', event => {
+			this.domEvents.addEventListener(this.line, 'click', event => {
 				if(isEditing && event.origDomEvent.shiftKey) {
 					if (typeof rolls[selectedId].objs[this.id] == "undefined") {
 						for (let id in rolls) {
@@ -63,7 +72,7 @@ class LineShared {
 		}
 	}
 
-	length() {
+	length = () => {
 		let d_x = this.x1 - this.x2;
 		let d_y = this.y1 - this.y2;
 		let d_z = this.z1 - this.z2;
@@ -80,7 +89,7 @@ class LineShared {
 
 	draw() {}
 
-	getEquid({revert, equidType}) {
+	getEquid({revert, equidType, globalBias}) {
 		let pEqInternal_1 = getEquidistantPoint(
 			{x: this.x1, y: this.y1, z: this.z1},
 			{x: this.x2, y: this.y2, z: this.z2},
@@ -100,38 +109,24 @@ class LineShared {
 			z2: pEqInternal_2.z,
 			equidLine : true,
 			equidType : equidType,
+			domEvents: this.domEvents,
+			scene: this.scene
 		});
 		return l;
 	}
 
 	addListener() {
-		domEvents.addEventListener(this.line, 'click', event => {
+		this.domEvents.addEventListener(this.line, 'click', event => {
 			if (event.origDomEvent.altKey || isEditing) {
 				return;
 			}
 			this.shear = Number(prompt('Если хотите удлинить или укоротить отрезок, введите положительное или отрицательное число соответственно. Для восстановления оставьте "0"', 0));
-			domEvents.removeEventListener(this.line, 'click');
-			domEvents.removeEventListener(this.line, 'mouseover');
-			domEvents.removeEventListener(this.line, 'mouseout');
-			scene.remove(this.line);
-			this.line = drawLine([{x: this.x2, y: this.y2, z: this.z2}, this.getShearCoords()]);
+			this.domEvents.removeEventListener(this.line, 'click');
+			this.domEvents.removeEventListener(this.line, 'mouseover');
+			this.domEvents.removeEventListener(this.line, 'mouseout');
+			this.scene.remove(this.line);
+			this.line = drawLine([{x: this.x2, y: this.y2, z: this.z2}, this.getShearCoords()], this.scene);
 			this.line.material = new THREE.LineBasicMaterial({color:this.color, linewidth: 1});
-			if (this.equidLine) {
-				domEvents.addEventListener(this.line, 'click', event => {
-					if(!event.origDomEvent.altKey) {
-						return;
-					}
-					let result = confirm(this.useInRoll ? "Не использовать данный сегмент?" : "Использовать данный сегмент?");
-					if (result) {
-						this.useInRoll = !this.useInRoll;
-						if (this.useInRoll) {
-							this.line.material = new THREE.LineBasicMaterial({color:this.color});
-						} else {
-							this.line.material = new THREE.LineBasicMaterial({color:this.color});
-						}
-					}
-				});
-			}
 			this.addListener();
 		});
 	}
@@ -157,7 +152,7 @@ class LineShared {
 }
 
 class Angle {
-	constructor({x1,y1,z1,x2,y2,z2,x3,y3,z3}) {
+	constructor({x1,y1,z1,x2,y2,z2,x3,y3,z3, domEvents, scene}) {
 		this.x1 = x1;
 		this.x2 = x2;
 		this.x3 = x3;
@@ -171,16 +166,18 @@ class Angle {
 		this.color = 0x000000;
 		this.line = NaN;
 		this.id = uuidv4();
+		this.scene = scene;
+		this.domEvents = domEvents;
 	}
 
 	draw() {
-		scene.remove(this.line);
+		this.scene.remove(this.line);
 		this.line = drawLine(
 			[
 				{x: this.x1, y: this.y1, z: this.z1},
 				{x: this.x2, y: this.y2, z: this.z2},
 				{x: this.x3, y: this.y3, z: this.z3}
-			]
+			], this.scene
 		);
 		this.line.material = new THREE.LineBasicMaterial({color:this.color, linewidth: 1});
 		return this.line;
@@ -212,8 +209,9 @@ class Angle {
 	}
 }
 
-class ArcShared {
-	constructor({x,y,z,R,fi_start, fi_end, points = [], equidArc}) {
+class ArcShared extends FIGURES.ArcFigure {
+	constructor({x,y,z,R,fi_start, fi_end, points = [], equidArc, domEvents, scene}) {
+		super({x,y,z,R,fi_start, fi_end});
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -226,10 +224,12 @@ class ArcShared {
 		this.useInRoll = true;
 		this.color = 0x000000;
 		this.id = uuidv4();
+		this.domEvents = domEvents;
+		this.scene = scene;
 		let curve_points = this.getPoints();
 		this.line = drawLine(curve_points.map(function (p) {
 			return {x: p.x, y: p.y, z: p.z};
-		}));
+		}), this.scene);
 		this.line.material = new THREE.LineBasicMaterial({color:this.color, linewidth: 1});
 	}
 
@@ -251,11 +251,11 @@ class ArcShared {
 	}
 
 	draw() {
-		scene.remove(this.line);
+		this.scene.remove(this.line);
 		let curve_points = this.getPoints();
 		this.line = drawLine(curve_points.map(function (p) {
 			return {x: p.x, y: p.y, z: p.z};
-		}));
+		}), this.scene);
 		this.line.material = new THREE.LineBasicMaterial({color:this.color, linewidth: 1});
 		return this.line;
 	}
@@ -322,13 +322,13 @@ class EquidArc {
 		let line;
 		if (this.inUse == SharedFormats.ARC) {
 			line = this.arc.draw();
-			domEvents.addEventListener(line, 'mouseover', event => {
+			this.arc.domEvents.addEventListener(line, 'mouseover', event => {
 				line.material = new THREE.LineBasicMaterial({color:0x008800});
 			});
-			domEvents.addEventListener(line, 'mouseout', event => {
+			this.arc.domEvents.addEventListener(line, 'mouseout', event => {
 				line.material = new THREE.LineBasicMaterial({color:this.arc.color, linewidth: 1});
 			});
-			domEvents.addEventListener(this.arc.line, 'click', event => {
+			this.arc.domEvents.addEventListener(this.arc.line, 'click', event => {
 				if (isEditing) {
 					if (event.origDomEvent.shiftKey) {
 						if(isEditing && event.origDomEvent.shiftKey) {
@@ -350,22 +350,22 @@ class EquidArc {
 						return;
 					}
 					this.inUse = SharedFormats.ANGLE;
-					domEvents.removeEventListener(line, 'click');
-					domEvents.removeEventListener(line, 'mouseover');
-					domEvents.removeEventListener(line, 'mouseout');
-					scene.remove(line);
+					this.arc.domEvents.removeEventListener(line, 'click');
+					this.arc.domEvents.removeEventListener(line, 'mouseover');
+					this.arc.domEvents.removeEventListener(line, 'mouseout');
+					this.arc.scene.remove(line);
 					this.draw();
 				}
 			}, true);
 		} else if (this.inUse == SharedFormats.ANGLE) {
 			line = this.angle.draw();
-			domEvents.addEventListener(line, 'mouseover', event => {
+			this.angle.domEvents.addEventListener(line, 'mouseover', event => {
 				line.material = new THREE.LineBasicMaterial({color:0x008800});
 			});
-			domEvents.addEventListener(line, 'mouseout', event => {
+			this.angle.domEvents.addEventListener(line, 'mouseout', event => {
 				line.material = new THREE.LineBasicMaterial({color:this.angle.color, linewidth: 1});
 			});
-			domEvents.addEventListener(line, 'click', event => {
+			this.angle.domEvents.addEventListener(line, 'click', event => {
 				if (isEditing) {
 					if (event.origDomEvent.shiftKey) {
 						if (typeof rolls[selectedId].objs[this.id] == "undefined") {
@@ -385,10 +385,10 @@ class EquidArc {
 						return;
 					}
 					this.inUse = SharedFormats.ARC;
-					domEvents.removeEventListener(line, 'click');
-					domEvents.removeEventListener(line, 'mouseover');
-					domEvents.removeEventListener(line, 'mouseout');
-					scene.remove(line);
+					this.angle.domEvents.removeEventListener(line, 'click');
+					this.angle.domEvents.removeEventListener(line, 'mouseover');
+					this.angle.domEvents.removeEventListener(line, 'mouseout');
+					this.angle.scene.remove(line);
 					this.draw();
 				}
 			}, true);
