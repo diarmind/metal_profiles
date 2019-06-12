@@ -70,14 +70,14 @@ class LineShared {
 	getVectors() {
         return [
             new VectorShared({
-                x: this.x1 - this.x2,
-                y: this.y1 - this.y2,
-                z: this.z1 - this.z2
+                x: this.x1,
+                y: this.y1,
+                z: this.z1
             }),
             new VectorShared({
-                x: this.x2 - this.x1,
-                y: this.y2 - this.y1,
-                z: this.z2 - this.z1
+                x: this.x2,
+                y: this.y2,
+                z: this.z2
             })
         ];
 	}
@@ -102,25 +102,31 @@ class LineShared {
 }
 
 
+const ArcDirections = {
+	CLOCKWISE: 'clockwise',
+	COUNTERCLOCKWISE: 'counterclockwise'
+};
+
 class ArcShared {
     /**
      * Constructs the ArcShared
-     * arc direction - counterclockwise
      * @param {Object} obj
-     * @param obj.x - x coordinate of arc center
-     * @param obj.y - y coordinate of arc center
-     * @param obj.z - z coordinate of arc center
-     * @param obj.R - arc radius
-     * @param obj.fi_start - start angle
-     * @param obj.fi_end - end angle
+     * @param {Number} obj.x - x coordinate of arc center
+     * @param {Number} obj.y - y coordinate of arc center
+     * @param {Number} obj.z - z coordinate of arc center
+     * @param {Number} obj.R - arc radius
+     * @param {Number} obj.fi_start - start angle
+     * @param {Number} obj.fi_end - end angle
+	 * @param {ArcDirections.CLOCKWISE | ArcDirections.CLOCKWISE} obj.direction - arc direction
      */
-	constructor({x, y, z, R, fi_start, fi_end}) {
+	constructor({x, y, z, R, fi_start, fi_end, direction = ArcDirections.COUNTERCLOCKWISE}) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.R = R;
 		this.fi_start = fi_start;
 		this.fi_end = fi_end;
+		this.direction = direction;
 
 		this.type = SharedFormats.ARC;
 		this.id = uuidv4();
@@ -158,4 +164,4 @@ class CurveShared {
 	}
 }
 
-export {VectorShared, LineShared, ArcShared, CurveShared};
+export {VectorShared, LineShared, ArcShared, CurveShared, SharedFormats, ArcDirections};
