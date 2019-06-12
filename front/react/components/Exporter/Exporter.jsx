@@ -1,7 +1,7 @@
 import React from 'react';
-import FileSaver from '../../utils/file-saver.js'
-import Dxf from '../../utils/libDXF/dxf.js'
-import DxfConverter from '../../utils/libDXF/dxf-converter.js'
+import FileSaver from './lib/file-saver.js'
+import Dxf from './lib/libDXF/dxf.js'
+import DxfConverter from './lib/libDXF/dxf-converter.js'
 
 import './Exporter.scss'
 
