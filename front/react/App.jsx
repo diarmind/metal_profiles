@@ -3,6 +3,7 @@ import Menu from './components/Menu/Menu.jsx';
 import Index from './components/Index/Index.jsx';
 import ProfileCreation from './components/ProfileCreation/ProfileCreation.jsx'
 import Roller from './components/Roller/Roller.jsx';
+import Exporter from './components/Exporter/Exporter.jsx';
 
 import './App.scss';
 
@@ -51,6 +52,13 @@ export default class App extends React.Component {
                     path: '',
                     name: 'shaft_profile_editor',
                     component: Roller,
+                    dataOut: null,
+                },
+                {
+                    title: 'Экспорт',
+                    path: '',
+                    name: 'exporter',
+                    component: Exporter,
                     dataOut: null,
                 },
                 {
