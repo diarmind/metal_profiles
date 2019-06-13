@@ -4,3 +4,4 @@ venv/
 package-lock.json
 webpack-stats.json
 kurs/config/__init__.py
+.DS_Store
