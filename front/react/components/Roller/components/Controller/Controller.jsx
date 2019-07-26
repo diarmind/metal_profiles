@@ -273,14 +273,14 @@ export default class Controller extends React.Component {
                             <p className="roller-controls__title">Параметры</p>
                         </div>
                         <div className="roller-controls__input-line">
-                            <p className="roller-controls__label">Расстояние между опорными профилями</p>
+                            <p className="roller-controls__label">Расстояние между клетями</p>
                             <input
                                 type="text"
                                 className="roller-controls__input"
                                 value={zDiff}
                                 onChange={this.onZDiffChange}
                                 onBlur={this.onZDiffBlur}
-                                title="Расстояние между опорными профилями"
+                                title="Расстояние между клетями"
                             />
                         </div>
                         <div className="roller-controls__input-line">
@@ -295,25 +295,25 @@ export default class Controller extends React.Component {
                             />
                         </div>
                         <div className="roller-controls__input-line">
-                            <p className="roller-controls__label">Число дополнительных делений линии</p>
+                            <p className="roller-controls__label">Число дополнительных поперечных делений прямого участка профиля</p>
                             <input
                                 type="text"
                                 className="roller-controls__input"
                                 value={lineApproximationCount}
                                 onChange={this.onLineApproximationCountChange}
                                 onBlur={this.onLineApproximationCountBlur}
-                                title="Число линий, заменяющих скругление"
+                                title="Число дополнительных поперечных делений прямого участка профиля"
                             />
                         </div>
                         <div className="roller-controls__input-line">
-                            <p className="roller-controls__label">Число дополнительных стадий между двумя сечениями</p>
+                            <p className="roller-controls__label">Число дополнительных промежуточных профилей между двумя клетями</p>
                             <input
                                 type="text"
                                 className="roller-controls__input"
                                 value={additionalRenderingStages}
                                 onChange={this.onAdditionalRenderingStagesChange}
                                 onBlur={this.onAdditionalRenderingStagesBlur}
-                                title="Число дополнительных стадий между двумя сечениями"
+                                title="Число дополнительных промежуточных профилей между двумя клетями"
                             />
                         </div>
                         <div className="roller-controls__input-line">

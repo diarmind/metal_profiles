@@ -75,14 +75,14 @@ export default class Roller extends React.Component {
      */
     initHelpers = () => {
         // AXES HELPER
-        const axesHelper = new THREE.AxesHelper(3);
-        this.scene.add(axesHelper);
+        // const axesHelper = new THREE.AxesHelper(3);
+        // this.scene.add(axesHelper);
 
         // GRID HELPER
-        const gridSize = 100;
-        const gridDivisions = 100;
-        const gridHelper = new THREE.GridHelper(gridSize, gridDivisions);
-        this.scene.add(gridHelper);
+        // const gridSize = 100;
+        // const gridDivisions = 100;
+        // const gridHelper = new THREE.GridHelper(gridSize, gridDivisions);
+        // this.scene.add(gridHelper);
     };
 
     /**
@@ -500,9 +500,9 @@ export default class Roller extends React.Component {
         } else {
             if (!this.isPaused) {
                 this.currentAnimationPosition += 0.002;
-                this.removeTempAnimationProfileMesh();
             }
             if (!this.isPaused || this.forceAnimationRerender) {
+                this.removeTempAnimationProfileMesh();
                 this.forceAnimationRerender = false;
                 if (this.plugs) {
                     this.plugs.visible = false;
@@ -811,14 +811,26 @@ function createMockPrimitives() {
                                 z: 0,
                             }),
                             new VectorShared({
-                                x: -8,
+                                x: -7,
                                 y: 0,
                                 z: 0,
                             }),
                         ),
                         LineShared.fromVectors(
                             new VectorShared({
-                                x: -8,
+                                x: -7,
+                                y: 0,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: -9,
+                                y: 0,
+                                z: 0,
+                            })
+                        ),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: -9,
                                 y: 0,
                                 z: 0,
                             }),
@@ -847,14 +859,26 @@ function createMockPrimitives() {
                                 z: 0,
                             }),
                             new VectorShared({
-                                x: -8,
+                                x: -9,
                                 y: -1,
                                 z: 0,
                             }),
                         ),
                         LineShared.fromVectors(
                             new VectorShared({
-                                x: -8,
+                                x: -9,
+                                y: -1,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: -7,
+                                y: -1,
+                                z: 0,
+                            }),
+                        ),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: -7,
                                 y: -1,
                                 z: 0,
                             }),
@@ -911,6 +935,343 @@ function createMockPrimitives() {
                     primitives: [
                         LineShared.fromVectors(
                             new VectorShared({
+                                x: 14.07,
+                                y: 6.243,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: 8.414,
+                                y: 0.586,
+                                z: 0,
+                            })
+                        ),
+                        new ArcShared({
+                            x: 7,
+                            y: 2,
+                            z: 0,
+                            R: 2,
+                            fi_start: - Math.PI / 4,
+                            fi_end: - Math.PI / 2,
+                            direction: ArcDirections.CLOCKWISE,
+                        }),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: 7,
+                                y: 0,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: -7,
+                                y: 0,
+                                z: 0,
+                            }),
+                        ),
+                        new ArcShared({
+                            x: -7,
+                            y: 2,
+                            z: 0,
+                            R: 2,
+                            fi_start: - Math.PI / 2,
+                            fi_end: - 3 * Math.PI / 4,
+                            direction: ArcDirections.CLOCKWISE,
+                        }),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: -8.414,
+                                y: 0.586,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: -14.07,
+                                y: 6.243,
+                                z: 0,
+                            }),
+                        ),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: -14.07,
+                                y: 6.243,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: -14.777,
+                                y: 5.536,
+                                z: 0,
+                            }),
+                        ),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: -14.777,
+                                y: 5.536,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: -9.83,
+                                y: 0.17,
+                                z: 0,
+                            }),
+                        ),
+                        new ArcShared({
+                            x: -7,
+                            y: 3,
+                            z: 0,
+                            R: 4,
+                            fi_start: - 3 * Math.PI / 4,
+                            fi_end: - Math.PI / 2,
+                            direction: ArcDirections.COUNTERCLOCKWISE,
+                        }),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: -7,
+                                y: -1,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: 7,
+                                y: -1,
+                                z: 0,
+                            }),
+                        ),
+                        new ArcShared({
+                            x: 7,
+                            y: 3,
+                            z: 0,
+                            R: 4,
+                            fi_start: - Math.PI / 2,
+                            fi_end: - Math.PI / 4,
+                            direction: ArcDirections.COUNTERCLOCKWISE,
+                        }),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: 9.83,
+                                y: 0.17,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: 14.777,
+                                y: 5.536,
+                                z: 0,
+                            }),
+                        ),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: 14.777,
+                                y: 5.536,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: 14.07,
+                                y: 6.243,
+                                z: 0,
+                            }),
+                        ),
+                    ]
+                })
+            }),
+            new RollerFigure({
+                curve: new CurveShared({
+                    primitives: [
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: 17.07,
+                                y: 15,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: 17.07,
+                                y: 9.243,
+                                z: 0,
+                            })
+                        ),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: 17.07,
+                                y: 9.243,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: 8.414,
+                                y: 0.586,
+                                z: 0,
+                            })
+                        ),
+                        new ArcShared({
+                            x: 7,
+                            y: 2,
+                            z: 0,
+                            R: 2,
+                            fi_start: - Math.PI / 4,
+                            fi_end: - Math.PI / 2,
+                            direction: ArcDirections.CLOCKWISE,
+                        }),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: 7,
+                                y: 0,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: -7,
+                                y: 0,
+                                z: 0,
+                            }),
+                        ),
+                        new ArcShared({
+                            x: -7,
+                            y: 2,
+                            z: 0,
+                            R: 2,
+                            fi_start: - Math.PI / 2,
+                            fi_end: - 3 * Math.PI / 4,
+                            direction: ArcDirections.CLOCKWISE,
+                        }),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: -8.414,
+                                y: 0.586,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: -17.07,
+                                y: 9.243,
+                                z: 0,
+                            }),
+                        ),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: -17.07,
+                                y: 9.243,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: -17.07,
+                                y: 15,
+                                z: 0,
+                            })
+                        ),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: -17.07,
+                                y: 15,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: 17.07,
+                                y: 15,
+                                z: 0,
+                            }),
+                            'hardcoded_id_top'
+                        )
+                    ]
+                }),
+                axis_id: 'hardcoded_id_top'
+            }),
+            new RollerFigure({
+                curve: new CurveShared({
+                    primitives: [
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: -17.777,
+                                y: -5,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: 17.777,
+                                y: -5,
+                                z: 0,
+                            }),
+                            'hardcoded_id'
+                        ),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: -17.777,
+                                y: -5,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: -17.777,
+                                y: 8.536,
+                                z: 0,
+                            }),
+                        ),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: -17.777,
+                                y: 8.536,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: -9.83,
+                                y: 0.17,
+                                z: 0,
+                            }),
+                        ),
+                        new ArcShared({
+                            x: -7,
+                            y: 3,
+                            z: 0,
+                            R: 4,
+                            fi_start: - 3 * Math.PI / 4,
+                            fi_end: - Math.PI / 2,
+                            direction: ArcDirections.COUNTERCLOCKWISE,
+                        }),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: -7,
+                                y: -1,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: 7,
+                                y: -1,
+                                z: 0,
+                            }),
+                        ),
+                        new ArcShared({
+                            x: 7,
+                            y: 3,
+                            z: 0,
+                            R: 4,
+                            fi_start: - Math.PI / 2,
+                            fi_end: - Math.PI / 4,
+                            direction: ArcDirections.COUNTERCLOCKWISE,
+                        }),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: 9.83,
+                                y: 0.17,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: 17.777,
+                                y: 8.536,
+                                z: 0,
+                            }),
+                        ),
+                        LineShared.fromVectors(
+                            new VectorShared({
+                                x: 17.777,
+                                y: 8.536,
+                                z: 0,
+                            }),
+                            new VectorShared({
+                                x: 17.777,
+                                y: -5,
+                                z: 0,
+                            }),
+                        ),
+                    ]
+                }),
+                axis_id: 'hardcoded_id'
+            }),
+            // add more figures here
+        ],
+        [
+            new ProfileFigure({
+                curve: new CurveShared({
+                    primitives: [
+                        LineShared.fromVectors(
+                            new VectorShared({
                                 x: 8,
                                 y: 9,
                                 z: 0,
@@ -937,15 +1298,24 @@ function createMockPrimitives() {
                                 z: 0,
                             }),
                             new VectorShared({
-                                x: -8,
+                                x: -7,
                                 y: 0,
                                 z: 0,
                             }),
                         ),
+                        new ArcShared({
+                            x: -7,
+                            y: 1,
+                            z: 0,
+                            R: 1,
+                            fi_start: - Math.PI / 2,
+                            fi_end: - Math.PI,
+                            direction: ArcDirections.CLOCKWISE,
+                        }),
                         LineShared.fromVectors(
                             new VectorShared({
                                 x: -8,
-                                y: 0,
+                                y: 1,
                                 z: 0,
                             }),
                             new VectorShared({
@@ -974,13 +1344,22 @@ function createMockPrimitives() {
                             }),
                             new VectorShared({
                                 x: -9,
-                                y: -1,
+                                y: 1,
                                 z: 0,
                             }),
                         ),
+                        new ArcShared({
+                            x: -7,
+                            y: 1,
+                            z: 0,
+                            R: 2,
+                            fi_start: - Math.PI,
+                            fi_end: - Math.PI / 2,
+                            direction: ArcDirections.COUNTERCLOCKWISE,
+                        }),
                         LineShared.fromVectors(
                             new VectorShared({
-                                x: -9,
+                                x: -7,
                                 y: -1,
                                 z: 0,
                             }),
@@ -1069,15 +1448,24 @@ function createMockPrimitives() {
                                 z: 0,
                             }),
                             new VectorShared({
-                                x: -8,
+                                x: -7,
                                 y: 0,
                                 z: 0,
                             }),
                         ),
+                        new ArcShared({
+                            x: -7,
+                            y: 1,
+                            z: 0,
+                            R: 1,
+                            fi_start: - Math.PI / 2,
+                            fi_end: - Math.PI,
+                            direction: ArcDirections.CLOCKWISE,
+                        }),
                         LineShared.fromVectors(
                             new VectorShared({
                                 x: -8,
-                                y: 0,
+                                y: 1,
                                 z: 0,
                             }),
                             new VectorShared({
