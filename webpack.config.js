@@ -3,6 +3,7 @@ const path = require("path");
 const BundleTracker = require('webpack-bundle-tracker');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const VueLoaderPlugin = require("vue-loader/lib/plugin");
 
 const publicPath = '/dist/build/';
 
@@ -37,6 +38,11 @@ module.exports = {
                 exclude: /node_modules/,
             },
             {
+                test: /\.vue$/,
+                loaders: ['vue-loader'],
+                exclude: /node_modules/
+            },
+            {
                 test: /(\.scss)|(\.css)$/,
                 loaders: ["style-loader", MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]
             },
@@ -57,6 +63,7 @@ module.exports = {
           template: "./src/index.html",
           minify: false,
           baseUrl: '/',
-        })
+        }),
+        new VueLoaderPlugin(),
     ]
 };
