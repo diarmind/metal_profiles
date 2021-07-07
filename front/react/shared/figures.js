@@ -37,4 +37,4 @@ class ProfileFigure {
     }
 }
 
-export {RollerFigure, ProfileFigure}
+export {RollerFigure, ProfileFigure, FigureTypes}
